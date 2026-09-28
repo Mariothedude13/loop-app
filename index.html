@@ -1,0 +1,967 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Loop — Short Videos, Your Way</title>
+
+    <style>
+        :root {
+            --pink: #ff315f;
+            --pink-light: #ff4f73;
+            --pink-dark: #d91f4a;
+            --black: #070707;
+            --card: #111111;
+            --text: #ffffff;
+            --muted: #a1a1a1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--black);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Background glow */
+        body::before {
+            content: "";
+            position: fixed;
+            width: 650px;
+            height: 650px;
+            background: radial-gradient(
+                circle,
+                rgba(255, 49, 95, 0.14),
+                transparent 70%
+            );
+            top: -300px;
+            left: -250px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(
+                circle,
+                rgba(255, 49, 95, 0.09),
+                transparent 70%
+            );
+            bottom: -300px;
+            right: -200px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* =========================
+           NAVIGATION
+        ========================= */
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 72px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 7%;
+
+            background: rgba(7, 7, 7, 0.82);
+            backdrop-filter: blur(18px);
+
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Loop logo */
+        .logo {
+            width: 38px;
+            height: 38px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--pink);
+
+            box-shadow:
+                0 0 25px rgba(255, 49, 95, 0.28);
+
+            position: relative;
+        }
+
+        .logo::after {
+            content: "";
+
+            width: 0;
+            height: 0;
+
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 13px solid white;
+
+            margin-left: 3px;
+        }
+
+        .brand-name {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.7px;
+        }
+
+        nav a {
+            color: #a9a9a9;
+            text-decoration: none;
+
+            margin-left: 28px;
+
+            font-size: 14px;
+
+            transition: 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--pink);
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+
+            padding: 130px 20px 80px;
+        }
+
+        .hero-content {
+            max-width: 900px;
+        }
+
+        .badge {
+            display: inline-block;
+
+            padding: 8px 15px;
+
+            border-radius: 999px;
+
+            background: rgba(255, 49, 95, 0.08);
+
+            border: 1px solid rgba(255, 49, 95, 0.25);
+
+            color: #ff7f99;
+
+            font-size: 13px;
+
+            margin-bottom: 27px;
+        }
+
+        h1 {
+            font-size: clamp(65px, 12vw, 140px);
+
+            line-height: 0.9;
+
+            letter-spacing: -8px;
+
+            margin-bottom: 30px;
+        }
+
+        h1 span {
+            color: var(--pink);
+        }
+
+        .hero p {
+            max-width: 620px;
+
+            margin: auto;
+
+            color: #a4a4a4;
+
+            font-size: 19px;
+
+            line-height: 1.6;
+        }
+
+        .buttons {
+            margin-top: 38px;
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 14px;
+
+            flex-wrap: wrap;
+        }
+
+        .button {
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            min-width: 195px;
+
+            padding: 16px 25px;
+
+            border-radius: 13px;
+
+            text-decoration: none;
+
+            font-weight: 700;
+
+            font-size: 15px;
+
+            transition:
+                transform 0.2s,
+                box-shadow 0.2s,
+                background 0.2s;
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+        }
+
+        .download {
+            color: white;
+
+            background: var(--pink);
+
+            box-shadow:
+                0 10px 35px rgba(255, 49, 95, 0.22);
+        }
+
+        .download:hover {
+            background: var(--pink-light);
+
+            box-shadow:
+                0 15px 45px rgba(255, 49, 95, 0.38);
+        }
+
+        .secondary {
+            color: white;
+
+            background: #151515;
+
+            border: 1px solid #282828;
+        }
+
+        .secondary:hover {
+            border-color: rgba(255, 49, 95, 0.4);
+        }
+
+        /* =========================
+           SECTIONS
+        ========================= */
+
+        section {
+            padding: 105px 7%;
+        }
+
+        .section-title {
+            text-align: center;
+
+            font-size: 42px;
+
+            margin-bottom: 14px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+
+            color: #888;
+
+            max-width: 600px;
+
+            margin: 0 auto 52px;
+
+            line-height: 1.6;
+        }
+
+        /* =========================
+           FEATURES
+        ========================= */
+
+        .features {
+            max-width: 1100px;
+
+            margin: auto;
+
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 18px;
+        }
+
+        .feature {
+            padding: 31px;
+
+            background: var(--card);
+
+            border: 1px solid #202020;
+
+            border-radius: 20px;
+
+            transition: 0.25s;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+
+            border-color: rgba(255, 49, 95, 0.35);
+
+            background: #141414;
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 14px;
+
+            background: rgba(255, 49, 95, 0.1);
+
+            font-size: 23px;
+
+            margin-bottom: 19px;
+        }
+
+        .feature h3 {
+            font-size: 19px;
+
+            margin-bottom: 10px;
+        }
+
+        .feature p {
+            color: #858585;
+
+            line-height: 1.6;
+
+            font-size: 14px;
+        }
+
+        /* =========================
+           DOWNLOAD
+        ========================= */
+
+        .download-section {
+            max-width: 950px;
+
+            margin: auto;
+        }
+
+        .download-card {
+            padding: 60px 35px;
+
+            text-align: center;
+
+            border-radius: 28px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255, 49, 95, 0.13),
+                    rgba(255, 49, 95, 0.025)
+                );
+
+            border: 1px solid rgba(255, 49, 95, 0.22);
+
+            box-shadow:
+                0 30px 100px rgba(0, 0, 0, 0.35);
+        }
+
+        .android-icon {
+            font-size: 55px;
+
+            margin-bottom: 20px;
+        }
+
+        .download-card h2 {
+            font-size: 36px;
+
+            margin-bottom: 13px;
+        }
+
+        .download-card p {
+            color: #999;
+
+            max-width: 550px;
+
+            margin: 0 auto 30px;
+
+            line-height: 1.6;
+        }
+
+        .version {
+            color: #666;
+
+            font-size: 12px;
+
+            margin-top: 16px;
+        }
+
+        /* =========================
+           INSTALLATION
+        ========================= */
+
+        .steps {
+            max-width: 750px;
+
+            margin: auto;
+        }
+
+        .step {
+            display: flex;
+
+            gap: 20px;
+
+            margin-bottom: 20px;
+
+            padding: 24px;
+
+            background: #101010;
+
+            border: 1px solid #202020;
+
+            border-radius: 17px;
+        }
+
+        .step-number {
+            min-width: 40px;
+
+            height: 40px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: var(--pink);
+
+            font-weight: 800;
+        }
+
+        .step h3 {
+            margin-bottom: 6px;
+        }
+
+        .step p {
+            color: #858585;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            padding: 55px 7%;
+
+            text-align: center;
+
+            border-top: 1px solid #171717;
+
+            color: #666;
+
+            font-size: 13px;
+        }
+
+        footer strong {
+            color: #aaa;
+        }
+
+        .footer-logo {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 9px;
+
+            margin-bottom: 15px;
+        }
+
+        .footer-logo .logo {
+            width: 28px;
+            height: 28px;
+        }
+
+        .footer-logo .logo::after {
+            border-top-width: 6px;
+            border-bottom-width: 6px;
+            border-left-width: 10px;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 800px) {
+
+            nav {
+                padding: 0 5%;
+            }
+
+            nav .links {
+                display: none;
+            }
+
+            h1 {
+                letter-spacing: -5px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 80px 5%;
+            }
+
+            .download-card {
+                padding: 45px 22px;
+            }
+
+            .step {
+                padding: 19px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVIGATION
+    ========================= -->
+
+    <nav>
+
+        <a href="#" class="brand">
+
+            <div class="logo"></div>
+
+            <div class="brand-name">
+                Loop
+            </div>
+
+        </a>
+
+        <div class="links">
+
+            <a href="#features">
+                Features
+            </a>
+
+            <a href="#download">
+                Download
+            </a>
+
+            <a href="#install">
+                Install
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =========================
+         HERO
+    ========================= -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <div class="badge">
+                🔥 Loop is in early access
+            </div>
+
+            <h1>
+                Welcome to <span>Loop.</span>
+            </h1>
+
+            <p>
+                Discover short videos, follow creators, share what you love,
+                and be part of a new video community.
+            </p>
+
+            <div class="buttons">
+
+                <a href="#download" class="button download">
+                    📱 Download Loop
+                </a>
+
+                <a href="#features" class="button secondary">
+                    Explore Loop
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         FEATURES
+    ========================= -->
+
+    <section id="features">
+
+        <h2 class="section-title">
+            Made for video.
+        </h2>
+
+        <p class="section-subtitle">
+            Everything you need to watch, create, and share short-form videos.
+        </p>
+
+        <div class="features">
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    ▶
+                </div>
+
+                <h3>
+                    Short Videos
+                </h3>
+
+                <p>
+                    Swipe through a fast vertical feed built for short-form video.
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    ♥
+                </div>
+
+                <h3>
+                    Connect
+                </h3>
+
+                <p>
+                    Follow creators, like videos, comment, and share your favorites.
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    ✦
+                </div>
+
+                <h3>
+                    Discover
+                </h3>
+
+                <p>
+                    Find new videos and creators from the growing Loop community.
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    @
+                </div>
+
+                <h3>
+                    Your Profile
+                </h3>
+
+                <p>
+                    Create your own profile and share your videos with the community.
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    💬
+                </div>
+
+                <h3>
+                    Comments
+                </h3>
+
+                <p>
+                    Join conversations and interact with other Loop users.
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    ↗
+                </div>
+
+                <h3>
+                    Share
+                </h3>
+
+                <p>
+                    Send videos to friends or share them outside of Loop.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         DOWNLOAD
+    ========================= -->
+
+    <section id="download">
+
+        <div class="download-section">
+
+            <div class="download-card">
+
+                <div class="android-icon">
+                    📱
+                </div>
+
+                <h2>
+                    Get Loop for Android
+                </h2>
+
+                <p>
+                    Download the latest Loop APK and start exploring.
+                    Loop is currently available for Android.
+                </p>
+
+                <!--
+                    PUT YOUR APK IN THE SAME FOLDER AS THIS HTML FILE.
+
+                    Example:
+
+                    LoopWebsite/
+                    ├── index.html
+                    └── Loop.apk
+
+                    If your APK has a different filename,
+                    change "Loop.apk" below.
+                -->
+
+                <a
+                    href="Loop.apk"
+                    class="button download"
+                    download
+                >
+                    ⬇ Download Loop APK
+                </a>
+
+                <div class="version">
+                    Android • Early Access
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         INSTALLATION
+    ========================= -->
+
+    <section id="install">
+
+        <h2 class="section-title">
+            Installing Loop
+        </h2>
+
+        <p class="section-subtitle">
+            Installing the Loop APK only takes a few steps.
+        </p>
+
+        <div class="steps">
+
+            <div class="step">
+
+                <div class="step-number">
+                    1
+                </div>
+
+                <div>
+
+                    <h3>
+                        Download Loop
+                    </h3>
+
+                    <p>
+                        Tap the Download Loop APK button and wait for the download
+                        to finish.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-number">
+                    2
+                </div>
+
+                <div>
+
+                    <h3>
+                        Open the APK
+                    </h3>
+
+                    <p>
+                        Open the downloaded APK from your browser or Downloads folder.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-number">
+                    3
+                </div>
+
+                <div>
+
+                    <h3>
+                        Allow installation
+                    </h3>
+
+                    <p>
+                        Android may ask you to allow your browser to install
+                        unknown apps. Allow it if necessary.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="step">
+
+                <div class="step-number">
+                    4
+                </div>
+
+                <div>
+
+                    <h3>
+                        Start Loop
+                    </h3>
+
+                    <p>
+                        Install the app and open Loop.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         FOOTER
+    ========================= -->
+
+    <footer>
+
+        <div class="footer-logo">
+
+            <div class="logo"></div>
+
+            <strong>
+                Loop
+            </strong>
+
+        </div>
+
+        © 2026 Loop. All rights reserved.
+
+    </footer>
+
+</body>
+</html>
+```
